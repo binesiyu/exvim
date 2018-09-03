@@ -61,6 +61,16 @@ function! exconfig#Generate_ignore(ignore,tool, ...) abort
             endfor
 
         endif
+    elseif a:tool ==# 'ctrlsf'
+        for ig in split(a:ignore,',')
+            call add(ignore, '-g')
+            if a:0 > 0
+                call add(ignore, "\"" . ig . "\"")
+            else
+                call add(ignore, "\"!" . ig . "\"")
+                " call add(ignore, '!' . ig)
+            endif
+        endfor
     endif
     return ignore
 endf
@@ -223,9 +233,19 @@ function exconfig#apply()
             endif
             let g:ctrlp_user_command = 'rg %s --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg'))
+            let ctrlsf_user_command = ' '
+                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf'))
+            if has_key(g:ctrlsf_extra_backend_args, 'rg')
+                let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
+            endif
         else
             let g:ctrlp_user_command = 'rg %s --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
+            let ctrlsf_user_command = ' '
+                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1))
+            if has_key(g:ctrlsf_extra_backend_args, 'rg')
+                let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
+            endif
         endif
     else
         " custom ctrlp ignores
