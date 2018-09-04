@@ -247,6 +247,7 @@ function exconfig#apply()
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
         endif
+        let g:ctrlsf_default_root = 'cwd'
     else
         " custom ctrlp ignores
         " let file_pattern = '\.exe$\|\.so$\|\.dll$\|\.pyc$\|\.csb$\|\.png$\|\.pkm$\|\.plist$\|\.jar\|\.ccz\|\.ogg\|\.tmx'
