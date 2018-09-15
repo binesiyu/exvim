@@ -441,14 +441,22 @@ function exconfig#apply()
 
     " open init file
     if vimentry#check('enable_init_file', 'true')
-        let init_open_file = vimentry#get( 'init_open_file' )
         " open file window
-        doautocmd BufLeave
-        doautocmd WinLeave
-        exec 'silent edit ' . fnameescape(init_open_file)
-        " exec 'silent split ' . fnameescape(init_open_file)
-        " trigger filetypedetect (syntax highlight)
-        exec 'doau filetypedetect BufRead ' . fnameescape(init_open_file)
+        func MyHandler(timer)
+            let init_open_file = vimentry#get( 'init_open_file' )
+            exec 'silent edit ' . fnameescape(init_open_file)
+        endfunc
+        let timer = timer_start(100, 'MyHandler',
+                    \ {'repeat': 1})
+
+        " let init_open_file = vimentry#get( 'init_open_file' )
+        " " open file window
+        " doautocmd BufLeave
+        " doautocmd WinLeave
+        " exec 'silent edit ' . fnameescape(init_open_file)
+        " " exec 'silent split ' . fnameescape(init_open_file)
+        " " trigger filetypedetect (syntax highlight)
+        " exec 'doau filetypedetect BufRead ' . fnameescape(init_open_file)
     endif
 
     " run customized scripts
