@@ -190,7 +190,7 @@ function exconfig#apply()
 
     " set cscope file path
     if vimentry#check('enable_cscope', 'true')
-        call excscope#set_csfile(g:exvim_folder.'/cscope.out')
+        call excscope#set_csfile(g:exvim_folder.'/GTAGS')
         call exconfig#gen_sh_update_cscope(g:exvim_folder)
         call excscope#connect()
     endif
@@ -655,14 +655,31 @@ endfunction
 function exconfig#gen_sh_update_cscope(path)
     " get cscope cmd
     let cscope_cmd = 'cscope'
-    if executable('cscope')
+    if executable('gtags')
+        let cscope_cmd = 'gtags'
+        " get cscope options
+        let cscope_optioins = ''
+        " If built-in parser exists for the target, it is used.
+        " Else if pygments parser exists it is used.
+        let $GTAGSLABEL = 'native-pygments'
+        let $GTAGSCONF = expand('~/.globalrc')
+        " The combination of gtags-cscope, vim's cscope and global files is
+        " a bit flaky. Environment variables are safer than vim passing
+        " paths around and interpreting input correctly.
+
+        let $GTAGSDBPATH = g:exvim_folder.'/GTAGS'
+        " let $GTAGSROOT = expand(g:exvim_project_root . g:exvim_project_name)
+        " cscope
+        set cscopetag                  " 使用 cscope 作为 tags 命令
+        set cscopeprg='gtags-cscope'   " 使用 gtags-cscope 代替 cscope
+    elseif executable('cscope')
         let cscope_cmd = 'cscope'
+        " get cscope options
+        let cscope_optioins = '-kb -i'
     else
         call ex#warning("Can't find cscope command in your system. Please install it first!")
     endif
 
-    " get cscope options
-    let cscope_optioins = '-kb -i'
 
     " generate scripts
     if ex#os#is('windows')
@@ -688,8 +705,8 @@ function exconfig#gen_sh_update_cscope(path)
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
                     \ 'export OPTIONS="'.cscope_optioins.'"'       ,
-                    \ 'export TMP="${DEST}/_cscope.out"'           ,
-                    \ 'export TARGET="${DEST}/cscope.out"'         ,
+                    \ 'export TMP="${DEST}"'           ,
+                    \ 'export TARGET="${DEST}"'         ,
                     \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'    ,
                     \ ]
     endif
