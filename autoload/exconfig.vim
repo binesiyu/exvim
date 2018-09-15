@@ -439,6 +439,18 @@ function exconfig#apply()
         endif
     endif
 
+    " open init file
+    if vimentry#check('enable_init_file', 'true')
+        let init_open_file = vimentry#get( 'init_open_file' )
+        " open file window
+        doautocmd BufLeave
+        doautocmd WinLeave
+        exec 'silent edit ' . fnameescape(init_open_file)
+        " exec 'silent split ' . fnameescape(init_open_file)
+        " trigger filetypedetect (syntax highlight)
+        exec 'doau filetypedetect BufRead ' . fnameescape(init_open_file)
+    endif
+
     " run customized scripts
     if exists('*g:exvim_post_init')
         call g:exvim_post_init()
