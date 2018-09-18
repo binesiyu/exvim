@@ -190,7 +190,7 @@ function exconfig#apply()
 
     " set cscope file path
     if vimentry#check('enable_cscope', 'true')
-        call excscope#set_csfile(g:exvim_folder.'/GTAGS')
+        call excscope#set_csfile(g:exvim_folder.'/cscope.out')
         call exconfig#gen_sh_update_cscope(g:exvim_folder)
         call excscope#connect()
     endif
@@ -675,7 +675,9 @@ endfunction
 function exconfig#gen_sh_update_cscope(path)
     " get cscope cmd
     let cscope_cmd = 'cscope'
+    let isgtags = 0
     if executable('gtags')
+        call excscope#set_csfile(g:exvim_project_root . '/.exvim.'. g:exvim_project_name . '/GTAGS')
         let cscope_cmd = 'gtags'
         " get cscope options
         let cscope_optioins = ''
@@ -687,11 +689,12 @@ function exconfig#gen_sh_update_cscope(path)
         " a bit flaky. Environment variables are safer than vim passing
         " paths around and interpreting input correctly.
 
-        let $GTAGSDBPATH = g:exvim_folder.'/GTAGS'
-        " let $GTAGSROOT = expand(g:exvim_project_root . g:exvim_project_name)
+        let $GTAGSDBPATH = expand(g:exvim_project_root . '/.exvim.'. g:exvim_project_name)
+        let $GTAGSROOT = expand(g:exvim_project_root)
         " cscope
         set cscopetag                  " 使用 cscope 作为 tags 命令
         set cscopeprg='gtags-cscope'   " 使用 gtags-cscope 代替 cscope
+        let isgtags = 1
     elseif executable('cscope')
         let cscope_cmd = 'cscope'
         " get cscope options
@@ -719,16 +722,29 @@ function exconfig#gen_sh_update_cscope(path)
                     \ ]
     else
         let fullpath = a:path . '/update-cscope.sh'
-        let scripts = [
-                    \ '#!/bin/bash'                                ,
-                    \ 'export DEST="'.a:path.'"'                   ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
-                    \ 'export OPTIONS="'.cscope_optioins.'"'       ,
-                    \ 'export TMP="${DEST}"'           ,
-                    \ 'export TARGET="${DEST}"'         ,
-                    \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'    ,
-                    \ ]
+        if isgtags == 1
+            let scripts = [
+                        \ '#!/bin/bash'                                ,
+                        \ 'export DEST="'.a:path.'"'                   ,
+                        \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                        \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
+                        \ 'export OPTIONS="'.cscope_optioins.'"'       ,
+                        \ 'export TMP="${DEST}"'           ,
+                        \ 'export TARGET="${DEST}"'         ,
+                        \ 'sh ${TOOLS}/shell/bash/update-gtags.sh'    ,
+                        \ ]
+        else
+            let scripts = [
+                        \ '#!/bin/bash'                                ,
+                        \ 'export DEST="'.a:path.'"'                   ,
+                        \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                        \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
+                        \ 'export OPTIONS="'.cscope_optioins.'"'       ,
+                        \ 'export TMP="${DEST}/_cscope.out"'           ,
+                        \ 'export TARGET="${DEST}/cscope.out"'         ,
+                        \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'    ,
+                        \ ]
+        endif
     endif
 
     " save to file

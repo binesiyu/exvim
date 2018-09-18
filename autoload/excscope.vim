@@ -16,7 +16,7 @@ let s:cscope_list = []
 let s:cscope = ''
 let s:last_line_nr = -1
 
-let s:csfile = './GTAGS'
+let s:csfile = './cscope.out'
 
 " general
 let s:excs_fold_start = '<<<<<<'
