@@ -111,7 +111,7 @@ else
             " Thanks Vimscript... you can use negative integers for strings
             " in the slice notation, but not for indexing characters :(
             let l:arglen = strlen(cmdarg)
-            if (cmdarg[0] == '"' && cmdarg[l:arglen - 1] == '"') || 
+            if (cmdarg[0] == '"' && cmdarg[l:arglen - 1] == '"') ||
                         \(cmdarg[0] == "'" && cmdarg[l:arglen - 1] == "'")
                 call add(l:outcmd, cmdarg[1:-2])
             else
@@ -243,7 +243,7 @@ function! gutentags#setup_gutentags() abort
     "  other such things)
     " Also don't do anything for the default `[No Name]` buffer you get
     " after starting Vim.
-    if &buftype != '' || 
+    if &buftype != '' ||
           \(bufname('%') == '' && !g:gutentags_generate_on_empty_buffer)
         return
     endif
@@ -305,9 +305,6 @@ function! gutentags#setup_gutentags() abort
     execute '  autocmd!'
     execute '  autocmd BufWritePost <buffer=' . l:bn . '> call s:write_triggered_update_tags(' . l:bn . ')'
     execute 'augroup end'
-
-    " Miscellaneous commands.
-    command! -buffer -bang GutentagsUpdate :call s:manual_update_tags(<bang>0)
 
     " Add these tags files to the known tags files.
     for module in keys(b:gutentags_files)
@@ -419,7 +416,7 @@ endfunction
 "  Tags File Management {{{
 
 " (Re)Generate the tags file for the current buffer's file.
-function! s:manual_update_tags(bang) abort
+function! gutentags#Manual_Update_Tags(bang) abort
     let l:bn = bufnr('%')
     for module in g:gutentags_modules
         call s:update_tags(l:bn, module, a:bang, 0)
@@ -465,10 +462,10 @@ function! s:update_tags(bufno, module, write_mode, queue_mode) abort
                 endif
             endfor
             if l:needs_queuing
-                call add(s:update_queue[a:module], 
+                call add(s:update_queue[a:module],
                             \[l:tags_file, a:bufno, a:write_mode])
             endif
-            call gutentags#trace("Tag file '" . l:tags_file . 
+            call gutentags#trace("Tag file '" . l:tags_file .
                         \"' is already being updated. Queuing it up...")
         elseif a:queue_mode == 1
             call gutentags#trace("Tag file '" . l:tags_file .

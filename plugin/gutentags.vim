@@ -35,7 +35,7 @@ let g:gutentags_pause_after_update = get(g:, 'gutentags_pause_after_update', 0)
 let g:gutentags_enabled = get(g:, 'gutentags_enabled', 1)
 let g:gutentags_modules = get(g:, 'gutentags_modules', ['ctags'])
 
-let g:gutentags_init_user_func = get(g:, 'gutentags_init_user_func', 
+let g:gutentags_init_user_func = get(g:, 'gutentags_init_user_func',
             \get(g:, 'gutentags_enabled_user_func', ''))
 
 let g:gutentags_add_default_project_roots = get(g:, 'gutentags_add_default_project_roots', 1)
@@ -59,6 +59,9 @@ let g:gutentags_generate_on_empty_buffer = get(g:, 'gutentags_generate_on_empty_
 let g:gutentags_file_list_command = get(g:, 'gutentags_file_list_command', '')
 
 let g:gutentags_use_jobs = get(g:, 'gutentags_use_jobs', has('job'))
+
+let g:gutentags_generate_idutiles = get(g:, 'gutentags_generate_idutiles', 0)
+let g:gutentags_generate_auto = get(g:, 'gutentags_generate_auto', 1)
 
 if !exists('g:gutentags_cache_dir')
     let g:gutentags_cache_dir = ''
@@ -89,11 +92,13 @@ endif
 
 " Gutentags Setup {{{
 
-augroup gutentags_detect
-    autocmd!
-    autocmd BufNewFile,BufReadPost *  call gutentags#setup_gutentags()
-    autocmd VimEnter               *  if expand('<amatch>')==''|call gutentags#setup_gutentags()|endif
-augroup end
+if g:gutentags_generate_auto
+    augroup gutentags_detect
+        autocmd!
+        autocmd BufNewFile,BufReadPost *  call gutentags#setup_gutentags()
+        autocmd VimEnter               *  if expand('<amatch>')==''|call gutentags#setup_gutentags()|endif
+    augroup end
+endif
 
 " }}}
 
@@ -108,5 +113,7 @@ if g:gutentags_debug
     command! GutentagsToggleFake    :call gutentags#fake()
 endif
 
+" Miscellaneous commands.
+command! -bang Update :call gutentags#Manual_Update_Tags(<bang>0)
 " }}}
 

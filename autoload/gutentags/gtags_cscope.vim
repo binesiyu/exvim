@@ -69,10 +69,13 @@ function! gutentags#gtags_cscope#init(project_root) abort
 	let $GTAGSDBPATH = l:db_path
 	let $GTAGSROOT = a:project_root
 
-	if g:gutentags_auto_add_gtags_cscope && 
+	if g:gutentags_auto_add_gtags_cscope &&
 				\!has_key(s:added_db_files, l:db_file)
 		let s:added_db_files[l:db_file] = 0
 		call s:add_db(l:db_file)
+        if g:gutentags_generate_idutiles
+            call exgsearch#set_id_file(l:db_path . '/ID')
+        endif
 	endif
 endfunction
 
@@ -87,6 +90,9 @@ function! gutentags#gtags_cscope#generate(proj_dir, tags_file, gen_opts) abort
 	if filereadable(l:proj_options_file)
 		let l:proj_options = readfile(l:proj_options_file)
 		let l:cmd += l:proj_options
+	endif
+	if g:gutentags_generate_idutiles
+		let l:cmd += ['-I']
 	endif
 	let l:cmd += ['--incremental', '"'.l:db_path.'"']
     let l:cmd = gutentags#make_args(l:cmd)
