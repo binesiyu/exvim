@@ -310,10 +310,10 @@ function exconfig#apply()
             endif
 
             " bind key mapping
-            if maparg('<leader>fc','n') != ""
-                nunmap <leader>fc
+            if maparg('<leader>nc','n') != ""
+                nunmap <leader>nc
             endif
-            nnoremap <unique> <leader>fc :NERDTreeFind<CR>
+            nnoremap <unique> <leader>nc :NERDTreeFind<CR>
 
             if has('gui_running') "  the <alt> key is only available in gui mode.
                 if has ('mac')
