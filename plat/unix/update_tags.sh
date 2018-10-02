@@ -92,7 +92,7 @@ echo "Locking tags file..."
 echo $$ > "$TAGS_FILE.lock"
 
 # Remove lock and temp file if script is stopped unexpectedly.
-# trap 'errorcode=$?; rm -f "$TAGS_FILE.lock" "$TAGS_FILE.files" "$TAGS_FILE.temp"; exit $errorcode' INT QUIT TERM EXIT
+trap 'errorcode=$?; rm -f "$TAGS_FILE.lock" "$TAGS_FILE.files" "$TAGS_FILE.temp"; exit $errorcode' INT QUIT TERM EXIT
 
 INDEX_WHOLE_PROJECT=1
 if [ -f "$TAGS_FILE" ]; then
@@ -122,7 +122,7 @@ if [ $INDEX_WHOLE_PROJECT -eq 1 ]; then
     fi
     echo "Running ctags on whole project"
     echo "$CTAGS_EXE -f \"$TAGS_FILE.temp\" $CTAGS_ARGS \"$PROJECT_ROOT\""
-    $CTAGS_EXE -f "$TAGS_FILE.temp" $CTAGS_ARGS "$PROJECT_ROOT"
+    $CTAGS_EXE -f "$TAGS_FILE.temp" $CTAGS_ARGS
 else
     echo "Running ctags on \"$UPDATED_SOURCE\""
     echo "$CTAGS_EXE -f \"$TAGS_FILE.temp\" $CTAGS_ARGS --append \"$UPDATED_SOURCE\""

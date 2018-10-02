@@ -32,6 +32,7 @@ endif
 " Gutentags Module Interface {{{
 
 let s:added_db_files = {}
+let s:runner_exe = gutentags#get_plat_file('update_gtags')
 
 function! s:add_db(db_file) abort
 	if filereadable(a:db_file)
@@ -66,8 +67,8 @@ function! gutentags#gtags_cscope#init(project_root) abort
 	" The combination of gtags-cscope, vim's cscope and global files is
 	" a bit flaky. Environment variables are safer than vim passing
 	" paths around and interpreting input correctly.
-	let $GTAGSDBPATH = l:db_path
-	let $GTAGSROOT = a:project_root
+    let $GTAGSDBPATH = l:db_path
+    let $GTAGSROOT = a:project_root
 
 	if g:gutentags_auto_add_gtags_cscope &&
 				\!has_key(s:added_db_files, l:db_file)
@@ -86,15 +87,36 @@ function! gutentags#gtags_cscope#generate(proj_dir, tags_file, gen_opts) abort
 
 	let l:proj_options_file = a:proj_dir . '/' . g:gutentags_gtags_options_file
 
-	let l:cmd = ['"'.g:gutentags_gtags_executable.'"']
+    let l:proj_extra_args = []
 	if filereadable(l:proj_options_file)
 		let l:proj_options = readfile(l:proj_options_file)
-		let l:cmd += l:proj_options
+		let l:proj_extra_args += l:proj_options
 	endif
 	if g:gutentags_generate_idutiles
-		let l:cmd += ['-I']
+        let l:proj_extra_args += ['-I']
 	endif
-	let l:cmd += ['--incremental', '"'.l:db_path.'"']
+    let l:proj_extra_args += ['--incremental']
+    let l:file_list_cmd = gutentags#get_project_file_list_cmd(a:proj_dir)
+    if !empty(l:file_list_cmd)
+        let l:cmd = [s:runner_exe]
+        if match(l:file_list_cmd, '///') > 0
+            let l:suffopts = split(l:file_list_cmd, '///')
+            let l:suffoptstr = l:suffopts[1]
+            let l:file_list_cmd = l:suffopts[0]
+            if l:suffoptstr == 'absolute'
+                let l:cmd += ['-A']
+            endif
+        endif
+        let l:cmd += ['-t', '"' . a:tags_file . '"']
+        let l:cmd += ['-L', '"' . l:file_list_cmd. '"']
+        let l:cmd += ['-p', '"' . a:proj_dir . '"']
+        let l:cmd += ['-T', '"' . l:db_path . '"']
+        let l:cmd += ['-O', shellescape(join(l:proj_extra_args))]
+    else
+        let l:proj_extra_args += ['"'.l:db_path.'"']
+        let l:cmd = ['"'.g:gutentags_gtags_executable.'"']
+        let l:cmd += l:proj_extra_args
+    endif
     let l:cmd = gutentags#make_args(l:cmd)
 
 	call gutentags#trace("Running: " . string(l:cmd))
