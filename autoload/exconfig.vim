@@ -134,7 +134,6 @@ function exconfig#apply()
         let g:gutentags_cache_dir = ''
         let g:gutentags_gtags_dbpath = g:exvim_folder
         let g:gutentags_ctags_tagfile = g:exvim_folder . '/tags'
-        let g:gutentags_gtags_dbpath = '.cache'
         let g:gutentags_auto_add_gtags_cscope = 0
         let g:gutentags_ctags_auto_set_tags = 0
         set cscopetag
@@ -176,16 +175,20 @@ function exconfig#apply()
                     let file_pattern .= '*/' .folder . '/*,'
                 endfor
             endif
-            let g:ctrlp_user_command = 'rg %s --no-ignore --hidden --files -g "" '
+            let l:default_user_command = ' --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg'))
+            let g:ctrlp_user_command = 'rg %s' . l:default_user_command
+            let g:gutentags_file_list_command = 'rg' . l:default_user_command
             let ctrlsf_user_command = ' '
                         \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf'))
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
         else
-            let g:ctrlp_user_command = 'rg %s --no-ignore --hidden --files -g "" '
+            let l:default_user_command = ' --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
+            let g:ctrlp_user_command = 'rg %s' . l:default_user_command
+            let g:gutentags_file_list_command = 'rg' . l:default_user_command
             let ctrlsf_user_command = ' '
                         \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1))
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
