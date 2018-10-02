@@ -114,7 +114,7 @@ function! gutentags#ctags#generate(proj_dir, tags_file, gen_opts) abort
         endif
         let l:cmd += ['-s', '"' . l:cur_file_path . '"']
     else
-        let l:file_list_cmd = gutentags#get_project_file_list_cmd(l:actual_proj_dir)
+        let l:file_list_cmd = gutentags#get_project_file_list_cmd(l:actual_proj_dir,'ctags')
         if !empty(l:file_list_cmd)
             if match(l:file_list_cmd, '///') > 0
                 let l:suffopts = split(l:file_list_cmd, '///')

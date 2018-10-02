@@ -133,17 +133,39 @@ function exconfig#apply()
     if vimentry#check('enable_gutentags', 'true')
         let g:gutentags_cache_dir = ''
         let g:gutentags_gtags_dbpath = g:exvim_folder
-        let g:gutentags_ctags_tagfile = g:exvim_folder . '/tags'
-        let g:gutentags_auto_add_gtags_cscope = 0
-        let g:gutentags_ctags_auto_set_tags = 0
-        set cscopetag
-        let s:old_tagrelative=&tagrelative
-        let &tagrelative=0 " set notagrelative
-        let s:old_tags=&tags
-        let &tags=fnameescape(s:old_tags.','.g:gutentags_ctags_tagfile)
-        call excscope#set_csfile(g:gutentags_gtags_dbpath)
-        call excscope#connect()
-        call exgsearch#set_id_file(g:gutentags_gtags_dbpath .'/ID')
+        let g:gutentags_generate_auto = 0
+        let g:gutentags_modules = []
+        " set gsearch
+        if vimentry#check('enable_gsearch', 'true')
+            let g:gutentags_modules += ['gsearch']
+            let g:gutentags_gsearch_tagfile = g:exvim_folder . '/ID'
+            let g:gutentags_gsearch_auto_set_tags = 0
+            call exgsearch#set_id_file(g:gutentags_gsearch_tagfile)
+        endif
+        " set tag file path
+        if vimentry#check('enable_tags', 'true')
+            let g:gutentags_modules += ['ctags']
+            let g:gutentags_ctags_auto_set_tags = 0
+            let g:gutentags_ctags_tagfile = g:exvim_folder . '/tags'
+            let s:old_tagrelative=&tagrelative
+            let &tagrelative=0 " set notagrelative
+            let s:old_tags=&tags
+            let &tags=fnameescape(s:old_tags.','.g:gutentags_ctags_tagfile)
+        endif
+        " set cscope file path
+        if vimentry#check('enable_cscope', 'true')
+            let g:gutentags_modules += ['gtags_cscope']
+            let g:gutentags_auto_add_gtags_cscope = 0
+            if !vimentry#check('enable_tags', 'true')
+                set cscopetag
+            endif
+            set cscopeprg='gtags-cscope'
+            let l:db_path = expand(g:exvim_project_root .'/' . g:gutentags_gtags_dbpath)
+            let $GTAGSDBPATH = l:db_path
+            let $GTAGSROOT = expand(g:exvim_project_root)
+            call excscope#set_csfile(l:db_path . '/GTAGS')
+            call excscope#connect()
+        endif
     endif
 
     if vimentry#check('enable_gutentags_auto', 'true')
@@ -178,22 +200,29 @@ function exconfig#apply()
             let l:default_user_command = ' --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg'))
             let g:ctrlp_user_command = 'rg %s' . l:default_user_command
-            let g:gutentags_file_list_command = 'rg' . l:default_user_command
+            " let g:gutentags_file_list_command = 'rg' . l:default_user_command
             let ctrlsf_user_command = ' '
                         \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf'))
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
+            let g:gutentags_file_list_command = {
+                        \'default' : 'rg  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,
+                        \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
+                        \}
         else
             let l:default_user_command = ' --no-ignore --hidden --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
             let g:ctrlp_user_command = 'rg %s' . l:default_user_command
-            let g:gutentags_file_list_command = 'rg' . l:default_user_command
             let ctrlsf_user_command = ' '
                         \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1))
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
+            let g:gutentags_file_list_command = {
+                        \'default' : 'rg  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,
+                        \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
+                        \}
         endif
         let g:ctrlsf_default_root = 'cwd'
     else

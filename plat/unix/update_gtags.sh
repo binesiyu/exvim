@@ -79,7 +79,7 @@ echo "Locking gtags file..."
 echo $$ > "$TAGS_FILE.lock"
 
 # Remove lock and temp file if script is stopped unexpectedly.
-trap 'errorcode=$?; rm -f "$TAGS_FILE.lock" "$TAGS_FILE.files" "$TAGS_FILE.temp"; exit $errorcode' INT QUIT TERM EXIT
+trap 'errorcode=$?; rm -f "$TAGS_FILE.lock" "$TAGS_FILE.files"; exit $errorcode' INT QUIT TERM EXIT
 
 
 if [ -n "${FILE_LIST_CMD}" ]; then

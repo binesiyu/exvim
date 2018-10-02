@@ -33,6 +33,7 @@ endif
 
 let s:added_db_files = {}
 let s:runner_exe = gutentags#get_plat_file('update_gtags')
+execute 'set cscopeprg=' . fnameescape(g:gutentags_gtags_cscope_executable)
 
 function! s:add_db(db_file) abort
 	if filereadable(a:db_file)
@@ -61,8 +62,6 @@ function! gutentags#gtags_cscope#init(project_root) abort
 	endif
 
 	let b:gutentags_files['gtags_cscope'] = l:db_file
-
-	execute 'set cscopeprg=' . fnameescape(g:gutentags_gtags_cscope_executable)
 
 	" The combination of gtags-cscope, vim's cscope and global files is
 	" a bit flaky. Environment variables are safer than vim passing
@@ -96,7 +95,7 @@ function! gutentags#gtags_cscope#generate(proj_dir, tags_file, gen_opts) abort
         let l:proj_extra_args += ['-I']
 	endif
     let l:proj_extra_args += ['--incremental']
-    let l:file_list_cmd = gutentags#get_project_file_list_cmd(a:proj_dir)
+    let l:file_list_cmd = gutentags#get_project_file_list_cmd(a:proj_dir,'gtags_cscope')
     if !empty(l:file_list_cmd)
         let l:cmd = [s:runner_exe]
         if match(l:file_list_cmd, '///') > 0

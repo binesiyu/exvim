@@ -161,7 +161,7 @@ function! s:cache_project_root(path) abort
     let s:known_projects[a:path] = l:result
 endfunction
 
-function! gutentags#get_project_file_list_cmd(path) abort
+function! gutentags#get_project_file_list_cmd(path,module) abort
     if type(g:gutentags_file_list_command) == type("")
         return gutentags#validate_cmd(g:gutentags_file_list_command)
     elseif type(g:gutentags_file_list_command) == type({})
@@ -172,6 +172,12 @@ function! gutentags#get_project_file_list_cmd(path) abort
                     return gutentags#validate_cmd(file_list_cmd)
                 endif
             endfor
+        endif
+        let l:modules = get(g:gutentags_file_list_command, 'modules', [])
+        if type(l:modules) == type({})
+            if has_key(l:modules, a:module)
+                return gutentags#validate_cmd(get(l:modules,a:module))
+            endif
         endif
         return get(g:gutentags_file_list_command, 'default', "")
     endif
@@ -301,10 +307,12 @@ function! gutentags#setup_gutentags() abort
     " callback. This will let us get that buffer's variables without causing
     " errors.
     let l:bn = bufnr('%')
-    execute 'augroup gutentags_buffer_' . l:bn
-    execute '  autocmd!'
-    execute '  autocmd BufWritePost <buffer=' . l:bn . '> call s:write_triggered_update_tags(' . l:bn . ')'
-    execute 'augroup end'
+    if g:gutentags_generate_auto
+        execute 'augroup gutentags_buffer_' . l:bn
+        execute '  autocmd!'
+        execute '  autocmd BufWritePost <buffer=' . l:bn . '> call s:write_triggered_update_tags(' . l:bn . ')'
+        execute 'augroup end'
+    endif
 
     " Add these tags files to the known tags files.
     for module in keys(b:gutentags_files)
