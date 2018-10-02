@@ -51,7 +51,7 @@ function! gutentags#ctags#init(project_root) abort
 
     " Set the tags file for Vim to use.
     if g:gutentags_ctags_auto_set_tags
-        execute 'setlocal tags^=' . fnameescape(b:gutentags_files['ctags'])
+        execute 'set tags^=' . fnameescape(b:gutentags_files['ctags'])
     endif
 
     " Check if the ctags executable exists.
