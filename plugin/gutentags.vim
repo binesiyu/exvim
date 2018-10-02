@@ -114,6 +114,7 @@ if g:gutentags_debug
 endif
 
 " Miscellaneous commands.
-command! -bang Update :call gutentags#Manual_Update_Tags(<bang>0)
+command! -bang UpdateSelf :call gutentags#Manual_Update_Tags(<bang>0)
+command! -bang Update :call gutentags#rescan()
 " }}}
 

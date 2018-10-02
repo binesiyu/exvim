@@ -134,7 +134,17 @@ function exconfig#apply()
         let g:gutentags_cache_dir = ''
         let g:gutentags_gtags_dbpath = g:exvim_folder
         let g:gutentags_ctags_tagfile = g:exvim_folder . '/tags'
+        let g:gutentags_gtags_dbpath = '.cache'
+        let g:gutentags_auto_add_gtags_cscope = 0
+        let g:gutentags_ctags_auto_set_tags = 0
         set cscopetag
+        let s:old_tagrelative=&tagrelative
+        let &tagrelative=0 " set notagrelative
+        let s:old_tags=&tags
+        let &tags=fnameescape(s:old_tags.','.g:gutentags_ctags_tagfile)
+        call excscope#set_csfile(g:gutentags_gtags_dbpath)
+        call excscope#connect()
+        call exgsearch#set_id_file(g:gutentags_gtags_dbpath .'/ID')
     endif
 
     if vimentry#check('enable_gutentags_auto', 'true')
