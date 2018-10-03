@@ -13,6 +13,11 @@ function exconfig#reset()
     let &tags=s:old_tags
 endfunction
 
+func MyHandler(timer)
+    let init_open_file = vimentry#get( 'init_open_file' )
+    exec 'silent edit ' . fnameescape(init_open_file)
+endfunc
+
 " exconfig#edit {{{
 function exconfig#edit_cur_vimentry()
     let project_name = vimentry#get('project_name')
@@ -343,11 +348,12 @@ function exconfig#apply()
 
     " open init file
     if vimentry#check('enable_init_file', 'true')
+        let init_open_file = vimentry#get( 'init_open_file' )
+        if init_open_file == ''
+            call ex#error("Can't find vimentry setting 'init_open_file'.")
+            return
+        endif
         " open file window
-        func MyHandler(timer)
-            let init_open_file = vimentry#get( 'init_open_file' )
-            exec 'silent edit ' . fnameescape(init_open_file)
-        endfunc
         let timer = timer_start(100, 'MyHandler',
                     \ {'repeat': 1})
 
