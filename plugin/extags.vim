@@ -38,7 +38,7 @@ if has('gui_running')
 else
     call extags#register_hotkey( 2  , 1, '<leader><ESC>'   , ":EXTagsClose<CR>"                         , 'Close window.' )
 endif
-call extags#register_hotkey( 3  , 1, '<Space>'         , ":call extags#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
+call extags#register_hotkey( 3  , 1, '<Tab>'         , ":call extags#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
 call extags#register_hotkey( 4  , 1, '<CR>'            , ":call extags#confirm_select('')<CR>"      , 'Go to the select result.' )
 call extags#register_hotkey( 5  , 1, '<2-LeftMouse>'   , ":call extags#confirm_select('')<CR>"      , 'Go to the select result.' )
 call extags#register_hotkey( 6  , 1, '<S-CR>'          , ":call extags#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
