@@ -515,6 +515,13 @@ endfunction
 
 function! gutentags#rescan(...)
     if exists('b:gutentags_files')
+        for module in keys(b:gutentags_files)
+            let l:tagfile = b:gutentags_files[module]
+            let l:found = index(s:known_files, l:tagfile)
+            if l:found >= 0
+                call remove(s:known_files, l:tagfile)
+            endif
+        endfor
         unlet b:gutentags_files
     endif
     if a:0 && a:1
