@@ -1,5 +1,5 @@
 " variables {{{1
-let s:title = "-GSearch-" 
+let s:title = "-GSearch-"
 let s:confirm_at = -1
 
 let s:zoom_in = 0
@@ -82,8 +82,8 @@ function exgsearch#open_window()
 
     let winnr = bufwinnr(s:title)
     if winnr == -1
-        call ex#window#open( 
-                    \ s:title, 
+        call ex#window#open(
+                    \ s:title,
                     \ g:ex_gsearch_winsize,
                     \ g:ex_gsearch_winpos,
                     \ 0,
@@ -134,22 +134,22 @@ endfunction
 " modifier: '' or 'shift'
 function exgsearch#confirm_select(modifier)
     " check if the line is valid file line
-    let line = getline('.') 
+    let line = getline('.')
 
-    " get filename 
+    " get filename
     let filename = line
 
     " NOTE: GSF,GSFW only provide filepath information, so we don't need special process.
-    let idx = stridx(line, ':') 
-    if idx > 0 
-        let filename = strpart(line, 0, idx) "DISABLE: escape(strpart(line, 0, idx), ' ') 
-    endif 
+    let idx = stridx(line, ':')
+    if idx > 0
+        let filename = strpart(line, 0, idx) "DISABLE: escape(strpart(line, 0, idx), ' ')
+    endif
 
     " check if file exists
-    if findfile(filename) == '' 
-        call ex#warning( filename . ' not found!' ) 
+    if findfile(filename) == ''
+        call ex#warning( filename . ' not found!' )
         return
-    endif 
+    endif
 
     " confirm the selection
     let s:confirm_at = line('.')
@@ -161,10 +161,10 @@ function exgsearch#confirm_select(modifier)
     " open the file
     if a:modifier == 'shift'
         if idx > 0
-            " get line number 
-            let line = strpart(line, idx+1) 
-            let idx = stridx(line, ":") 
-            let linenr  = eval(strpart(line, 0, idx)) 
+            " get line number
+            let line = strpart(line, idx+1)
+            let idx = stridx(line, ":")
+            let linenr  = eval(strpart(line, 0, idx))
         endif
         exe ' silent pedit +'.linenr . ' ' .escape(filename, ' ')
         silent! wincmd P
@@ -174,29 +174,41 @@ function exgsearch#confirm_select(modifier)
         endif
         call ex#window#goto_plugin_window()
     else
-    if bufnr('%') != bufnr(filename) 
-        exe ' silent e ' . escape(filename,' ') 
-    endif 
+        if a:modifier == 't'
+            exe ' silent :tab sb '
+        elseif a:modifier == 's'
+            exe ' silent :sb '
+        elseif a:modifier == 'v'
+            exe ' silent :vert sb '
+        endif
 
-    if idx > 0 
-        " get line number 
-        let line = strpart(line, idx+1) 
-        let idx = stridx(line, ":") 
-        let linenr  = eval(strpart(line, 0, idx)) 
-        exec ' call cursor(linenr, 1)' 
+        if bufnr('%') != bufnr(filename)
+            exe ' silent e ' . escape(filename,' ')
+        endif
 
-        " jump to the pattern if the code have been modified 
-        let pattern = strpart(line, idx+2) 
-        let pattern = '\V' . substitute( pattern, '\', '\\\', "g" ) 
-        if search(pattern, 'cw') == 0 
-            call ex#warning('Line pattern not found: ' . pattern)
-        endif 
-    endif 
+        if idx > 0
+            " get line number
+            let line = strpart(line, idx+1)
+            let idx = stridx(line, ":")
+            let linenr  = eval(strpart(line, 0, idx))
+            exec ' call cursor(linenr, 1)'
 
-    " go back to global search window 
-    exe 'normal! zz'
-    call ex#hl#target_line(line('.'))
-    call ex#window#goto_plugin_window()
+            " jump to the pattern if the code have been modified
+            let pattern = strpart(line, idx+2)
+            let pattern = '\V' . substitute( pattern, '\', '\\\', "g" )
+            if search(pattern, 'cw') == 0
+                call ex#warning('Line pattern not found: ' . pattern)
+            endif
+        endif
+
+        " go back to global search window
+        exe 'normal! zz'
+        if a:modifier == ''
+            call ex#hl#target_line(line('.'))
+            call ex#window#goto_plugin_window()
+        else
+            call exgsearch#close_window()
+        endif
     endif
 endfunction
 
@@ -255,7 +267,7 @@ function exgsearch#search( pattern, method )
     " clear screen and put new result
     silent exec '1,$d _'
 
-    " add online help 
+    " add online help
     if g:ex_gsearch_enable_help
         silent call append ( 0, s:help_text )
         silent exec '$d'
@@ -309,7 +321,7 @@ function exgsearch#filter( pattern, option, reverse )
     let range = start_line.',$'
 
     " if reverse search, we first filter out not pattern line, then then filter pattern
-    if a:reverse 
+    if a:reverse
         let search_results = '\(.\+:\d\+:\).*'
         silent exec range . 'v/' . search_results . '/d'
         silent exec range . 'g/' . final_pattern . '/d'

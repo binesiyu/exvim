@@ -20,7 +20,7 @@ if !exists('g:ex_gsearch_enable_sort')
     let g:ex_gsearch_enable_sort = 1
 endif
 
-" will not sort the result if result lines more than x 
+" will not sort the result if result lines more than x
 if !exists('g:ex_gsearch_sort_lines_threshold')
     let g:ex_gsearch_sort_lines_threshold = 100
 endif
@@ -51,13 +51,14 @@ else
 endif
 call exgsearch#register_hotkey( 3  , 1, '<Tab>'         , ":call exgsearch#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
 call exgsearch#register_hotkey( 4  , 1, '<CR>'            , ":call exgsearch#confirm_select('')<CR>"      , 'Go to the search result.' )
-call exgsearch#register_hotkey( 5  , 1, '<2-LeftMouse>'   , ":call exgsearch#confirm_select('')<CR>"      , 'Go to the search result.' )
 call exgsearch#register_hotkey( 6  , 1, '<S-CR>'          , ":call exgsearch#confirm_select('shift')<CR>" , 'Go to the search result in split window.' )
-call exgsearch#register_hotkey( 7  , 1, '<S-2-LeftMouse>' , ":call exgsearch#confirm_select('shift')<CR>" , 'Go to the search result in split window.' )
 call exgsearch#register_hotkey( 8  , 1, '<leader>r'       , ":exec 'Filter ' . @/<CR>"                    , 'Filter search result.' )
 call exgsearch#register_hotkey( 9  , 1, '<leader>fr'      , ":exec 'FilterFile ' . @/<CR>"                , 'Filter files in search result.' )
 call exgsearch#register_hotkey( 10 , 1, '<leader>d'       , ":exec 'ReverseFilter ' . @/<CR>"             , 'Reverse filter search result.' )
 call exgsearch#register_hotkey( 11 , 1, '<leader>fd'      , ":exec 'ReverseFilterFile ' . @/<CR>"         , 'Reverse filter files in search result.' )
+call exgsearch#register_hotkey( 12  , 1, '<C-T>'       , ":call exgsearch#confirm_select('t')<CR>"      , 'Go to the search result in new tab' )
+call exgsearch#register_hotkey( 13  , 1, '<C-S>'       , ":call exgsearch#confirm_select('s')<CR>"      , 'Go to the search result in sprite' )
+call exgsearch#register_hotkey( 14  , 1, '<C-V>'       , ":call exgsearch#confirm_select('v')<CR>"      , 'Go to the search result in v sprite' )
 "}}}
 
 call ex#register_plugin( 'exgsearch', { 'actions': ['autoclose'] } )

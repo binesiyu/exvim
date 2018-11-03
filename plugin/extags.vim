@@ -40,9 +40,10 @@ else
 endif
 call extags#register_hotkey( 3  , 1, '<Tab>'         , ":call extags#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
 call extags#register_hotkey( 4  , 1, '<CR>'            , ":call extags#confirm_select('')<CR>"      , 'Go to the select result.' )
-call extags#register_hotkey( 5  , 1, '<2-LeftMouse>'   , ":call extags#confirm_select('')<CR>"      , 'Go to the select result.' )
 call extags#register_hotkey( 6  , 1, '<S-CR>'          , ":call extags#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
-call extags#register_hotkey( 7  , 1, '<S-2-LeftMouse>' , ":call extags#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
+call extags#register_hotkey( 7  , 1, '<C-T>'            , ":call extags#confirm_select('t')<CR>"      , 'Go to the select result in new tab' )
+call extags#register_hotkey( 8  , 1, '<C-S>'            , ":call extags#confirm_select('s')<CR>"      , 'Go to the select result in sprite' )
+call extags#register_hotkey( 9  , 1, '<C-V>'            , ":call extags#confirm_select('v')<CR>"      , 'Go to the select result in v sprite' )
 "}}}
 
 call ex#register_plugin( 'extags', { 'actions': ['autoclose'] } )

@@ -193,10 +193,10 @@ function excscope#goto(modifier)
             endif
             call ex#window#goto_plugin_window()
         else
-        if bufnr('%') != qf_item.bufnr
-            exe 'silent e ' . bufname(qf_item.bufnr)
-        endif
-        call cursor( qf_item.lnum, qf_item.col )
+            if bufnr('%') != qf_item.bufnr
+                exe 'silent e ' . bufname(qf_item.bufnr)
+            endif
+            call cursor( qf_item.lnum, qf_item.col )
         endif
     elseif line =~ '^\S\+:\d\+:\s<<\S\+>>' " g method jump
         " get elements in location line ( file name, line )
@@ -217,8 +217,8 @@ function excscope#goto(modifier)
                 endif
                 call ex#window#goto_plugin_window()
             else
-            exe 'silent e ' . elements[0]
-            exec 'call cursor(elements[1], 1)'
+                exe 'silent e ' . elements[0]
+                exec 'call cursor(elements[1], 1)'
         endif
         endif
     else

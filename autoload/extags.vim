@@ -1,5 +1,5 @@
 " variables {{{1
-let s:title = "-Tags-" 
+let s:title = "-Tags-"
 let s:confirm_at = -1
 
 let s:zoom_in = 0
@@ -84,8 +84,8 @@ function extags#open_window()
 
     let winnr = bufwinnr(s:title)
     if winnr == -1
-        call ex#window#open( 
-                    \ s:title, 
+        call ex#window#open(
+                    \ s:title,
                     \ g:ex_tags_winsize,
                     \ g:ex_tags_winpos,
                     \ 0,
@@ -205,37 +205,48 @@ function extags#confirm_select(modifier)
         call ex#window#goto_plugin_window()
     else
 
-    if bufnr('%') != bufnr(filename)
-        exe ' silent e ' . filename
-    endif
-
-    " cursor jump
-    let ex_cmd = s:tag_list[cur_tagidx-1].cmd
-    try
-        silent exe ex_cmd
-    catch /^Vim\%((\a\+)\)\=:E/
-        " if ex_cmd is not digital, try jump again manual
-        if match( ex_cmd, '^\/\^' ) != -1
-            let pattern = strpart(ex_cmd, 2, strlen(ex_cmd)-4)
-            let pattern = '\V\^' . pattern . (pattern[len(pattern)-1] == '$' ? '\$' : '')
-            if search(pattern, 'w') == 0
-                call ex#warning('search pattern not found: ' . pattern)
-                return
-            endif
+        if a:modifier == 't'
+            exe ' silent :tab sb '
+        elseif a:modifier == 's'
+            exe ' silent :sb '
+        elseif a:modifier == 'v'
+            exe ' silent :vert sb '
         endif
-    endtry
+        if bufnr('%') != bufnr(filename)
+            exe ' silent e ' . filename
+        endif
 
-    " go back to tags window
-    exe 'normal! zz'
-    call ex#hl#target_line(line('.'))
-    call ex#window#goto_plugin_window()
+        " cursor jump
+        let ex_cmd = s:tag_list[cur_tagidx-1].cmd
+        try
+            silent exe ex_cmd
+        catch /^Vim\%((\a\+)\)\=:E/
+            " if ex_cmd is not digital, try jump again manual
+            if match( ex_cmd, '^\/\^' ) != -1
+                let pattern = strpart(ex_cmd, 2, strlen(ex_cmd)-4)
+                let pattern = '\V\^' . pattern . (pattern[len(pattern)-1] == '$' ? '\$' : '')
+                if search(pattern, 'w') == 0
+                    call ex#warning('search pattern not found: ' . pattern)
+                    return
+                endif
+            endif
+        endtry
+
+        " go back to tags window
+        exe 'normal! zz'
+        if a:modifier == ''
+            call ex#hl#target_line(line('.'))
+            call ex#window#goto_plugin_window()
+        else
+            call extags#close_window()
+        endif
     endif
 endfunction
 
 " extags#select {{{2
 
 function s:convert_filename(filename)
-    return fnamemodify( a:filename, ':t' ) . ' (' . fnamemodify( a:filename, ':h' ) . ')'    
+    return fnamemodify( a:filename, ':t' ) . ' (' . fnamemodify( a:filename, ':h' ) . ')'
 endfunction
 
 function s:put_taglist()
@@ -265,13 +276,13 @@ function s:put_taglist()
         endif
         " put search patterns
         let quick_view = ''
-        if tag_info.cmd =~# '^\/\^' 
+        if tag_info.cmd =~# '^\/\^'
             let quick_view = strpart( tag_info.cmd, 2, strlen(tag_info.cmd)-4 )
             let quick_view = strpart( quick_view, match(quick_view, '\S') )
         elseif tag_info.cmd =~# '^\d\+'
             try
                 let file_list = readfile( fnamemodify(tag_info.filename,":p") )
-                let line_num = eval(tag_info.cmd) - 1 
+                let line_num = eval(tag_info.cmd) - 1
                 let quick_view = file_list[line_num]
                 let quick_view = strpart( quick_view, match(quick_view, '\S') )
             catch /^Vim\%((\a\+)\)\=:E/
@@ -303,7 +314,7 @@ function extags#select( tag )
     " NOTE: we use \s\* which allowed the tag have white space at the end.
     "       this is useful for lua. In current version of cTags(5.8), it
     "       will parse the lua function with space if you define the function
-    "       as: functon foobar () instead of functoin foobar(). 
+    "       as: functon foobar () instead of functoin foobar().
     if g:ex_tags_ignore_case && (match(in_tag, '\u') == -1)
         let in_tag = substitute( in_tag, '\', '\\\', "g" )
         echomsg 'parsing ' . in_tag . '...(ignore case)'
@@ -324,7 +335,7 @@ function extags#select( tag )
     " clear screen and put new result
     silent exec '1,$d _'
 
-    " add online help 
+    " add online help
     if g:ex_tags_enable_help
         silent call append ( 0, s:help_text )
         silent exec '$d'
