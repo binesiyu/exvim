@@ -59,11 +59,12 @@ if has('gui_running')
 else
     call excscope#register_hotkey( 2  , 1, '<leader><ESC>'   , ":EXCSClose<CR>"                         , 'Close window.' )
 endif
-call excscope#register_hotkey( 3  , 1, '<Tab>'         , ":call excscope#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
-call excscope#register_hotkey( 4  , 1, '<CR>'            , ":call excscope#confirm_select('')<CR>"      , 'Go to the select result.' )
-call excscope#register_hotkey( 5  , 1, '<2-LeftMouse>'   , ":call excscope#confirm_select('')<CR>"      , 'Go to the select result.' )
-call excscope#register_hotkey( 6  , 1, '<S-CR>'          , ":call excscope#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
-call excscope#register_hotkey( 7  , 1, '<S-2-LeftMouse>' , ":call excscope#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
+call excscope#register_hotkey( 3 , 1 , '<Tab>'           , ":call excscope#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
+call excscope#register_hotkey( 4 , 1 , '<CR>'            , ":call excscope#confirm_select('')<CR>"      , 'Go to the select result.' )
+call excscope#register_hotkey( 5 , 1 , '<2-LeftMouse>'   , ":call excscope#confirm_select('')<CR>"      , 'Go to the select result.' )
+call excscope#register_hotkey( 6 , 1 , '<S-CR>'          , ":call excscope#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
+call excscope#register_hotkey( 7 , 1 , '<S-2-LeftMouse>' , ":call excscope#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
+call excscope#register_hotkey( 8 , 1 , '<C-C>'           , ":EXCSClose<CR>"                             , 'Close window.' )
 "}}}
 
 call ex#register_plugin( 'excscope', { 'actions': ['autoclose'] } )
