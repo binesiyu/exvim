@@ -136,7 +136,7 @@ function exconfig#apply()
     let expand_tab = vimentry#get('expand_tab')
     let &expandtab = (expand_tab == "true" ? 1 : 0)
 
-    let dictionary_path = vimentry#get('dictionary_path','')
+    let dictionary_path = vimentry#get('dict','')
     let &dictionary=expand(dictionary_path)
 
     " set gsearch

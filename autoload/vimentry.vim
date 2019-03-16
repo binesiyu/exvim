@@ -70,7 +70,7 @@ function vimentry#write_default_template()
                 \ "project_name = '" . projectName . "'",
                 \ "",
                 \ "-- dictionary",
-                \ s:write_default( "dictionary_path", &dictionary,"" ),
+                \ s:write_default( "dict", &dictionary,"" ),
                 \ "",
                 \ "-- File And Folder Filters:",
                 \ s:write_default( "folder_filter_mode", "include", "{ include, exclude }" ),
