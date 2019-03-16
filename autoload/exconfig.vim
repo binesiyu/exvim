@@ -1,6 +1,7 @@
 let s:old_titlestring=&titlestring
 let s:old_tagrelative=&tagrelative
 let s:old_tags=&tags
+let s:old_dictionary=&dictionary
 
 " exconfig#apply_project_type {{{
 function exconfig#apply_project_type()
@@ -11,6 +12,7 @@ function exconfig#reset()
     let &titlestring=s:old_titlestring
     let &tagrelative=s:old_tagrelative
     let &tags=s:old_tags
+    let &dictionary=s:old_dictionary
 endfunction
 
 func MyHandler(timer)
@@ -133,6 +135,9 @@ function exconfig#apply()
 
     let expand_tab = vimentry#get('expand_tab')
     let &expandtab = (expand_tab == "true" ? 1 : 0)
+
+    let dictionary_path = vimentry#get('dictionary_path','')
+    let &dictionary=expand(dictionary_path)
 
     " set gsearch
     if vimentry#check('enable_gutentags', 'true')
