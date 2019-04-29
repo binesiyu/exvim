@@ -33,11 +33,7 @@ command! EXTagsClose call extags#close_window()
 
 " default key mappings {{{1
 call extags#register_hotkey( 1  , 1, '<F1>'            , ":call extags#toggle_help()<CR>"           , 'Toggle help.' )
-if has('gui_running')
-    call extags#register_hotkey( 2  , 1, '<ESC>'           , ":EXTagsClose<CR>"                         , 'Close window.' )
-else
-    call extags#register_hotkey( 2  , 1, '<leader><ESC>'   , ":EXTagsClose<CR>"                         , 'Close window.' )
-endif
+call extags#register_hotkey( 2  , 1, '<ESC>'           , ":EXTagsClose<CR>"                         , 'Close window.' )
 call extags#register_hotkey( 3  , 1, '<Tab>'         , ":call extags#toggle_zoom()<CR>"           , 'Zoom in/out project window.' )
 call extags#register_hotkey( 4  , 1, '<CR>'            , ":call extags#confirm_select('')<CR>"      , 'Go to the select result.' )
 call extags#register_hotkey( 6  , 1, '<S-CR>'          , ":call extags#confirm_select('shift')<CR>" , 'Go to the select result in split window.' )
