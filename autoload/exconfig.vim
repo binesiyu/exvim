@@ -221,11 +221,22 @@ function exconfig#apply()
                         \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
                         \}
         else
+            let folders = vimentry#get('folder_filter',[])
+            let folders_pattern = ''
+            if len(folders) > 0
+                for folder in folders
+                    let folders_pattern .= folder . ' '
+                endfor
+            endif
             let l:default_user_command = ' --no-ignore --hidden -L --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
-            let g:ctrlp_user_command = 'rg %s' . l:default_user_command
+            if len(folders_pattern) > 0
+                let g:ctrlp_user_command = 'rg '.folders_pattern . l:default_user_command
+            else
+                let g:ctrlp_user_command = 'rg %s' . l:default_user_command . folders_pattern
+            endif
             let ctrlsf_user_command = ' '
-                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1))
+                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1)) . folders_pattern
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
