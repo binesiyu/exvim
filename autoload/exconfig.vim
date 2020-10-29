@@ -236,7 +236,7 @@ function exconfig#apply()
                 let g:ctrlp_user_command = 'rg %s' . l:default_user_command . folders_pattern
             endif
             let ctrlsf_user_command = ' '
-                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1)) . folders_pattern
+                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1)) . ' ' . folders_pattern
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
