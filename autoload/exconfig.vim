@@ -207,7 +207,7 @@ function exconfig#apply()
                     let file_pattern .= '*/' .folder . '/*,'
                 endfor
             endif
-            let l:default_user_command = ' --no-ignore --hidden --files -g "" '
+            let l:default_user_command = ' --no-ignore --hidden -L --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg'))
             let g:ctrlp_user_command = 'rg %s' . l:default_user_command
             " let g:gutentags_file_list_command = 'rg' . l:default_user_command
@@ -217,11 +217,11 @@ function exconfig#apply()
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
             let g:gutentags_file_list_command = {
-                        \'default' : 'rg  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,
+                        \'default' : 'rg  --no-ignore --hidden -L --files -g "" ' . ctrlsf_user_command ,
                         \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
                         \}
         else
-            let l:default_user_command = ' --no-ignore --hidden --files -g "" '
+            let l:default_user_command = ' --no-ignore --hidden -L --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
             let g:ctrlp_user_command = 'rg %s' . l:default_user_command
             let ctrlsf_user_command = ' '
@@ -230,7 +230,7 @@ function exconfig#apply()
                 let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
             endif
             let g:gutentags_file_list_command = {
-                        \'default' : 'rg  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,
+                        \'default' : 'rg  --no-ignore --hidden -L --files -g "" ' . ctrlsf_user_command ,
                         \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
                         \}
         endif
