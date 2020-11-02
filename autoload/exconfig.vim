@@ -225,27 +225,29 @@ function exconfig#apply()
             let folders_pattern = ''
             if len(folders) > 0
                 for folder in folders
-                    let folders_pattern .= folder . ' '
+                    let folders_pattern .= "-g '*/" . folder . "/*' "
                 endfor
             endif
             let l:default_user_command = ' --no-ignore --hidden -L --files -g "" '
                         \ . join(exconfig#Generate_ignore(file_pattern,'rg', 1))
             if len(folders_pattern) > 0
-                let g:ctrlp_user_command = 'rg '.folders_pattern . l:default_user_command
+                let g:ctrlp_user_command = "rg %s " . folders_pattern . l:default_user_command
             else
-                let g:ctrlp_user_command = 'rg %s' . l:default_user_command . folders_pattern
+                let g:ctrlp_user_command = 'rg %s' . l:default_user_command
             endif
             let ctrlsf_user_command = ' '
-                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1)) . ' ' . folders_pattern
+                        \ . join(exconfig#Generate_ignore(file_pattern,'ctrlsf', 1))
             if has_key(g:ctrlsf_extra_backend_args, 'rg')
-                let g:ctrlsf_extra_backend_args['rg'] = ctrlsf_user_command
+                let g:ctrlsf_extra_backend_args['rg'] = ' --no-ignore ' . ctrlsf_user_command
             endif
             let g:gutentags_file_list_command = {
                         \'default' : 'rg  --no-ignore --hidden -L --files -g "" ' . ctrlsf_user_command ,
-                        \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden --files -g "" ' . ctrlsf_user_command ,},
+                        \'modules' : {'gsearch' : 'rg --null  --no-ignore --hidden -L --files -g "" ' . ctrlsf_user_command ,},
                         \}
         endif
         let g:ctrlsf_default_root = 'cwd'
+        let g:Lf_WorkingDirectory = g:exvim_project_root
+        let g:Lf_ExternalCommand = g:ctrlp_user_command
     else
         " custom ctrlp ignores
         " let file_pattern = '\.exe$\|\.so$\|\.dll$\|\.pyc$\|\.csb$\|\.png$\|\.pkm$\|\.plist$\|\.jar\|\.ccz\|\.ogg\|\.tmx'
