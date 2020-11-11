@@ -236,6 +236,7 @@ function exconfig#apply()
                         \}
         endif
         let g:ctrlsf_default_root = 'cwd'
+        let g:Lf_WorkingDirectoryMode = 'c'
         let g:Lf_WorkingDirectory = g:exvim_project_root
         let g:Lf_ExternalCommand = g:ctrlp_user_command
     else
