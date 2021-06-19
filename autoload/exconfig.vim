@@ -149,6 +149,7 @@ function exconfig#apply()
         if vimentry#check('enable_gsearch', 'true')
             let g:gutentags_modules += ['gsearch']
             let g:gutentags_gsearch_tagfile = g:exvim_folder . '/ID'
+            let g:LID_File = g:exvim_folder . '/ID'
             let g:gutentags_gsearch_auto_set_tags = 0
             call exgsearch#set_id_file(g:gutentags_gsearch_tagfile)
         endif
