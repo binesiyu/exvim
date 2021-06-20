@@ -103,7 +103,7 @@ function exconfig#apply()
 
     let g:exvim_project_name = project_name
     let g:exvim_project_root = cwd
-    let g:exvim_folder = './.exvim.'.project_name
+    let g:exvim_folder = '.exvim.'.project_name
 
     " set parent working directory
     silent exec 'cd ' . fnameescape(cwd)
@@ -161,7 +161,7 @@ function exconfig#apply()
             let s:old_tagrelative=&tagrelative
             let &tagrelative=0 " set notagrelative
             let s:old_tags=&tags
-            let &tags=fnameescape(s:old_tags.','.g:gutentags_ctags_tagfile)
+            let &tags=fnameescape(g:gutentags_ctags_tagfile)
         endif
         " set cscope file path
         if vimentry#check('enable_cscope', 'true')
